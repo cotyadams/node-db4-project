@@ -23,15 +23,17 @@ router.get('/:id', async (req, res, next) => {
         }
         
     })
-
+    console.log(ingredientsObj)
 
     const recipeObj = {
         recipe_id: recipe[0].recipe_id,
         recipe_name: recipe[0].recipe_name,
         created_at: recipe[0].created_at,
     }
+
     const stepsArray = [];
     recipe.map((node, i) => {
+        if (!valueExistsForKey(stepsArray, 'step_number', node.step_number)) {
             const step = {
                 step_number: node.step_number,
                 step_instructions: node.step_instructions,
@@ -39,8 +41,18 @@ router.get('/:id', async (req, res, next) => {
                 ingredients: ingredientsObj[node.step_id]
             }
         stepsArray.push(step)
+        }
     })
+    console.log(stepsArray)
     recipeObj.steps = stepsArray
     res.status(200).json(recipeObj)
 })
+function valueExistsForKey(array, key, value) {
+    for (let obj of array) {
+        if (obj.hasOwnProperty(key) && obj[key] === value) {
+            return true;
+        }
+    }
+    return false;
+}
 module.exports = router;
